@@ -67,13 +67,98 @@ maze_runner = MazeRunner(maze_example1['m'], maze_example1['s'], maze_example1['
 
 
 def maze_controller(maze_runner):
-    goStraightList=[]
+    my_way=[[]]
+
+    def go_right():
+        maze_runner.right()
+        if maze_runner.go():
+            maze_runner.left()
+            return 'right'
+        else:
+            maze_runner.left()
+            return False
+
+    def go_left():
+        maze_runner.left()
+        if maze_runner.go():
+            maze_runner.right()
+            return 'left'
+        else:
+            maze_runner.right()
+            return False
+
+    def go_back():
+        maze_runner.right()
+        maze_runner.right()
+        if maze_runner.go():
+            maze_runner.right()
+            maze_runner.right()
+            return 'back'
+        else:
+            maze_runner.right()
+            maze_runner.right()
+            return False
+    
+    def go_straight():
+        if maze_runner.go():
+            return 'straight'
+        else:
+            return False
+
+    def check_back_after():
+        if step=='straight':
+            maze_runner.right()
+            maze_runner.right()
+            maze_runner.go()
+            maze_runner.right()
+            maze_runner.right()
+            return True
+        elif step=='left':
+            maze_runner.right()
+            maze_runner.go()
+            maze_runner.left()
+            return True
+        elif step=='rigth':
+            maze_runner.left()                
+            maze_runner.go()
+            maze_runner.right()
+            return True
+        elif step=='back':
+            maze_runner.go()
+            return True
+        else:
+            return False
+
+
+
+    def examining():
+        if maze_runner.found():
+            return 'found'
+        else:
+            if last_turn=='start':
+                
+                step_1=check_back_after(go_back())
+
+                step_2=check_back_after(go_left())
+                step_3=check_back_after(go_right())
+                step_4=check_back_after(go_straight())
+
+                
+                
+            if last_turn=='straight':
+
+            if last_turn=='left':
+
+            if last_turn=='right'
+            if last_turn=='back'
+
+
+ goStraightList=[]
     print 'goStraightList'
 
     def go_back():
         maze_runner.turn_left()
         for x in xrange(1,1000):
-            print ''
             if len(goStraightList)==0:
                 maze_runner.turn_right()
                 return True
@@ -127,22 +212,9 @@ def maze_controller(maze_runner):
                 elif goStraightList[-1]==2:
                     goStraightList.pop()
                     go_back()
-    go_straight()
 
 
 maze_controller(maze_runner)
 
 print maze_runner.found()
 
-
-
-
-
-
-
-
-
-    # print maze_runner.go()
-    # print maze_runner.go()
-    # maze_runner.turn_left()
-    # print maze_runner.go()
