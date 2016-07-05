@@ -47,10 +47,10 @@ class MazeRunner(object):
         return self.__x == self.__finish[0] and self.__y == self.__finish[1]
 maze_example1 = {
     'm': [
-        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,1,0,1,0,0,0,0],
         [1,0,1,1,1,0,1,1,1,0,1],
-        [1,0,1,0,0,0,0,0,1,0,1],
-        [1,0,1,0,1,0,1,0,1,0,1],
+        [1,0,1,0,1,0,0,0,1,0,1],
+        [1,0,1,0,0,0,1,0,1,0,1],
         [1,0,1,0,1,0,1,0,1,0,1],
         [1,0,1,0,1,0,1,0,1,0,1],
         [1,0,1,0,1,0,1,0,1,0,1],
@@ -64,6 +64,7 @@ maze_example1 = {
 }
 
 maze_runner = MazeRunner(maze_example1['m'], maze_example1['s'], maze_example1['f'])
+
 
 last_turn='start'
 
@@ -125,14 +126,14 @@ def maze_controller(maze_runner):
             maze_runner.go()
             maze_runner.turn_left()
             return 'left'
-        elif step=='rigth':
+        elif step=='right':
             maze_runner.turn_left()                
             maze_runner.go()
             maze_runner.turn_right()
-            return 'rigth'
-        elif step=='ud':
+            return 'right'
+        elif step=='up':
             maze_runner.go()
-            return 'ud'
+            return 'up'
         else:
             return False
 
@@ -192,40 +193,49 @@ def maze_controller(maze_runner):
 
 
 
-    def go():
+    def go(examining=None):
         global last_turn
-        for x in xrange(1,2):
-            print  last_turn
-            examining=examining_crossroads(last_turn)
-            if  examining=='found':
-                break
-                
-            elif examining:
-                for x in examining:
-                    if x=='down':
-                        go_down()
-                        my_crossroads[-1][0]=False
-                        last_turn='down'
-                        go()
-                    elif x=='left':
-                        go_left()
-                        my_crossroads[-1][1]=False
-                        last_turn='left'
-                        go()
-                    elif x=='right':
-                        go_right()
-                        my_crossroads[-1][2]=False
-                        last_turn='right'
-                        go()
-                    elif x=='up':
-                        go_up()
-                        my_crossroads[-1][3]=False
-                        last_turn='up'
-                        go()
-                    elif x=='previous':
-                        pass
-                # go_back(examining)
-                check_back_after(last_turn)
+        examining=examining_crossroads(last_turn)
+        print examining
+        if  examining=='found':
+            return 'found'
+            
+        elif examining:
+            for x in examining:
+                print 'x ='+ str(x)
+                if x=='down':
+                    print 'go_down' 
+                    go_down()
+                    my_crossroads[-1][0]=False
+                    last_turn='down'
+                    if go(examining)=='found':
+                        return 'found'
+                elif x=='left':
+                    print 'go_left'
+                    go_left()
+                    my_crossroads[-1][1]=False
+                    last_turn='left'
+                    if go(examining)=='found':
+                        return 'found'
+                elif x=='right':
+                    print 'go_right'
+                    go_right()
+                    my_crossroads[-1][2]=False
+                    last_turn='right'
+                    if go(examining)=='found':
+                        return 'found'
+                elif x=='up':
+                    print 'go_up'
+                    go_up()
+                    my_crossroads[-1][3]=False
+                    last_turn='up'
+                    if go(examining)=='found':
+                        return 'found'
+                elif x=='previous':
+                    pass
+            # go_back(examining)
+            print 'check_back_after' 
+            check_back_after(last_turn)
     go()
                         
 
@@ -300,5 +310,5 @@ def maze_controller(maze_runner):
 
 maze_controller(maze_runner)
 
-print maze_runner.found()
+print 'maze_runner.found()' + str(maze_runner.found())
 
