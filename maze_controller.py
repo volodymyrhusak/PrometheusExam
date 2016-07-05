@@ -1,4 +1,5 @@
-
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 class MazeRunner(object):
     
@@ -64,12 +65,15 @@ maze_example1 = {
 
 maze_runner = MazeRunner(maze_example1['m'], maze_example1['s'], maze_example1['f'])
 
-
+last_turn='start'
 
 def maze_controller(maze_runner):
-    my_way=[[]]
+    my_way=[]
+    my_crossroads=[]
+    
 
     def go_right():
+        '''turn rigth and look in the same direction '''
         maze_runner.right()
         if maze_runner.go():
             maze_runner.left()
@@ -79,6 +83,7 @@ def maze_controller(maze_runner):
             return False
 
     def go_left():
+        '''turn lest and look in the same direction '''
         maze_runner.left()
         if maze_runner.go():
             maze_runner.right()
@@ -87,131 +92,210 @@ def maze_controller(maze_runner):
             maze_runner.right()
             return False
 
-    def go_back():
+    def go_up():
+        '''go up and look in the same direction '''
         maze_runner.right()
         maze_runner.right()
         if maze_runner.go():
             maze_runner.right()
             maze_runner.right()
-            return 'back'
+            return 'up'
         else:
             maze_runner.right()
             maze_runner.right()
             return False
     
-    def go_straight():
+    def go_down():
+        '''go down and look in the same direction '''
         if maze_runner.go():
-            return 'straight'
+            return 'down'
         else:
             return False
 
-    def check_back_after():
-        if step=='straight':
+    def check_back_after(step):
+        '''return coor after examining '''
+        if step=='down':
             maze_runner.right()
             maze_runner.right()
             maze_runner.go()
             maze_runner.right()
             maze_runner.right()
-            return True
+            return 'down'
         elif step=='left':
             maze_runner.right()
             maze_runner.go()
             maze_runner.left()
-            return True
+            return 'left'
         elif step=='rigth':
             maze_runner.left()                
             maze_runner.go()
             maze_runner.right()
-            return True
-        elif step=='back':
+            return 'rigth'
+        elif step=='ud':
             maze_runner.go()
-            return True
+            return 'ud'
         else:
             return False
 
 
 
-    def examining():
+    def examining_crossroads(last_turn):
+        '''examining for crossroads'''
         if maze_runner.found():
             return 'found'
         else:
-            if last_turn=='start':
-                
-                step_1=check_back_after(go_back())
-
+            if last_turn=='start':              
+                step_1=check_back_after(go_up())
                 step_2=check_back_after(go_left())
                 step_3=check_back_after(go_right())
-                step_4=check_back_after(go_straight())
+                step_4=check_back_after(go_down())
+                my_crossroads.append([step_1,step_2,step_3,step_4])
+                return [step_1,step_2,step_3,step_4]
 
-                
-                
-            if last_turn=='straight':
+            elif last_turn=='down':
+                step_2=check_back_after(go_left())
+                step_3=check_back_after(go_right())
+                step_4=check_back_after(go_down())
+                my_crossroads.append(['previous',step_2,step_3,step_4])
+                return ['previous',step_2,step_3,step_4]
 
-            if last_turn=='left':
+            elif last_turn=='left':
+                step_1=check_back_after(go_up())
+                step_2=check_back_after(go_left())
+                step_4=check_back_after(go_down())
+                my_crossroads.append([step_1,step_2,'previous',step_4])
+                return [step_1,step_2,'previous',step_4]
 
-            if last_turn=='right'
-            if last_turn=='back'
+            elif last_turn=='right':
+                step_1=check_back_after(go_up())
+                step_3=check_back_after(go_right())
+                step_4=check_back_after(go_down())
+                my_crossroads.append([step_1,'previous',step_3,step_4])
+                return [step_1,'previous',step_3,step_4]
+
+            elif last_turn=='up':
+                step_1=check_back_after(go_up())
+                step_2=check_back_after(go_left())
+                step_3=check_back_after(go_right())
+                my_crossroads.append([step_1,step_2,step_3,'previous'])
+                return [step_1,step_2,step_3,'previous']
+            else:
+                return False
+
+    def go_back(examining):
+        pass
+            
 
 
- goStraightList=[]
-    print 'goStraightList'
 
-    def go_back():
-        maze_runner.turn_left()
+
+
+
+
+
+    def go():
+
         for x in xrange(1,1000):
-            if len(goStraightList)==0:
-                maze_runner.turn_right()
-                return True
-            elif goStraightList[-1]==1:
-                maze_runner.go()
-                goStraightList.pop()
-            elif goStraightList[-1]==2:
-                maze_runner.turn_right()
-                goStraightList.pop()
-            elif goStraightList[-1]==3:
-                goStraightList.pop()
-                if maze_runner.go():
-                    if maze_runner.found():
-                        break
-                    goStraightList.append(4)
-                    goStraightList.append(1)
-                    return True
-            elif goStraightList[-1]==4:
-                goStraightList.pop()
-                maze_runner.turn_right()
+            examining=examining_crossroads(last_turn)
+            if  examining=='found':
+                break
+                
+            elif examining:
+                for x in examining:
+                    if x=='down':
+                        go_down()
+                        my_crossroads[-1][0]=False
+                        last_turn='down'
+                        go()
+                    elif x=='left':
+                        go_left()
+                        my_crossroads[-1][1]=False
+                        last_turn='left'
+                        go()
+                    elif x=='right':
+                        go_right()
+                        my_crossroads[-1][2]=False
+                        last_turn='right'
+                        go()
+                    elif x=='up':
+                        go_up()
+                        my_crossroads[-1][3]=False
+                        last_turn='up'
+                        go()
+                    elif x=='previous':
+                        pass
+                # go_back(examining)
+                check_back_after(last_turn)
+    go()
+                        
+
+
+
+ # godownList=[]
+ #    print 'godownList'
+
+ #    def go_up():
+ #        maze_runner.turn_left()
+ #        for x in xrange(1,1000):
+ #            if len(godownList)==0:
+ #                maze_runner.turn_right()
+ #                return True
+ #            elif godownList[-1]==1:
+ #                maze_runner.go()
+ #                godownList.pop()
+ #            elif godownList[-1]==2:
+ #                maze_runner.turn_right()
+ #                godownList.pop()
+ #            elif godownList[-1]==3:
+ #                godownList.pop()
+ #                if maze_runner.go():
+ #                    if maze_runner.found():
+ #                        break
+ #                    godownList.append(4)
+ #                    godownList.append(1)
+ #                    return True
+ #            elif godownList[-1]==4:
+ #                godownList.pop()
+ #                maze_runner.turn_right()
 
 
 
         
     
-    def go_straight():
-        for x in xrange(1,1000):
-            if maze_runner.found():
-                break
-            if maze_runner.go():
-                goStraightList.append(1)
-            else:
-                if len(goStraightList)==0 or  goStraightList[-1]==1  :
-                    maze_runner.turn_right()
-                    goStraightList.append(3)
-                    if maze_runner.go():
-                        if maze_runner.found():
-                            break
-                        goStraightList.append(1)
+ #    def go():
+ #        for x in xrange(1,1000):
+ #            examining()
+
+
+
+
+        
+ #            if maze_runner.found():
+ #                break
+ #            if maze_runner.go():
+ #                godownList.append(1)
+ #            else:
+ #                if len(godownList)==0 or  godownList[-1]==1  :
+ #                    maze_runner.turn_right()
+ #                    godownList.append(3)
+ #                    if maze_runner.go():
+ #                        if maze_runner.found():
+ #                            break
+ #                        godownList.append(1)
                 
-                elif goStraightList[-1]==3:
-                    goStraightList.pop()
-                    maze_runner.turn_left()
-                    maze_runner.turn_left()
-                    goStraightList.append(2)
-                    if maze_runner.go():
-                        if maze_runner.found():
-                            break 
-                        goStraightList.append(1)
+ #                elif godownList[-1]==3:
+ #                    godownList.pop()
+ #                    maze_runner.turn_left()
+ #                    maze_runner.turn_left()
+ #                    godownList.append(2)
+ #                    if maze_runner.go():
+ #                        if maze_runner.found():
+ #                            break 
+ #                        godownList.append(1)
                 
-                elif goStraightList[-1]==2:
-                    goStraightList.pop()
-                    go_back()
+ #                elif godownList[-1]==2:
+ #                    godownList.pop()
+ #                    go_up()
 
 
 maze_controller(maze_runner)
