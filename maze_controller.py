@@ -70,39 +70,38 @@ last_turn='start'
 def maze_controller(maze_runner):
     my_way=[]
     my_crossroads=[]
-    
 
     def go_right():
         '''turn rigth and look in the same direction '''
-        maze_runner.right()
+        maze_runner.turn_right()
         if maze_runner.go():
-            maze_runner.left()
+            maze_runner.turn_left()
             return 'right'
         else:
-            maze_runner.left()
+            maze_runner.turn_left()
             return False
 
     def go_left():
         '''turn lest and look in the same direction '''
-        maze_runner.left()
+        maze_runner.turn_left()
         if maze_runner.go():
-            maze_runner.right()
+            maze_runner.turn_right()
             return 'left'
         else:
-            maze_runner.right()
+            maze_runner.turn_right()
             return False
 
     def go_up():
         '''go up and look in the same direction '''
-        maze_runner.right()
-        maze_runner.right()
+        maze_runner.turn_right()
+        maze_runner.turn_right()
         if maze_runner.go():
-            maze_runner.right()
-            maze_runner.right()
+            maze_runner.turn_right()
+            maze_runner.turn_right()
             return 'up'
         else:
-            maze_runner.right()
-            maze_runner.right()
+            maze_runner.turn_right()
+            maze_runner.turn_right()
             return False
     
     def go_down():
@@ -115,21 +114,21 @@ def maze_controller(maze_runner):
     def check_back_after(step):
         '''return coor after examining '''
         if step=='down':
-            maze_runner.right()
-            maze_runner.right()
+            maze_runner.turn_right()
+            maze_runner.turn_right()
             maze_runner.go()
-            maze_runner.right()
-            maze_runner.right()
+            maze_runner.turn_right()
+            maze_runner.turn_right()
             return 'down'
         elif step=='left':
-            maze_runner.right()
+            maze_runner.turn_right()
             maze_runner.go()
-            maze_runner.left()
+            maze_runner.turn_left()
             return 'left'
         elif step=='rigth':
-            maze_runner.left()                
+            maze_runner.turn_left()                
             maze_runner.go()
-            maze_runner.right()
+            maze_runner.turn_right()
             return 'rigth'
         elif step=='ud':
             maze_runner.go()
@@ -194,8 +193,9 @@ def maze_controller(maze_runner):
 
 
     def go():
-
-        for x in xrange(1,1000):
+        global last_turn
+        for x in xrange(1,2):
+            print  last_turn
             examining=examining_crossroads(last_turn)
             if  examining=='found':
                 break
